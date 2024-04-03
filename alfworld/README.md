@@ -1,11 +1,8 @@
 # ALFWorld
 
-ALFWORLD with modification made by the authors of LLM-Planner.
-Following information is for reference only.
-
-[<b>Aligning Text and Embodied Environments for Interactive Learning</b>](https://arxiv.org/abs/2010.03768)  
-[Mohit Shridhar](https://mohitshridhar.com/), [Xingdi (Eric) Yuan](https://xingdi-eric-yuan.github.io/), [Marc-Alexandre Côté](https://www.microsoft.com/en-us/research/people/macote/),  
-[Yonatan Bisk](https://yonatanbisk.com/), [Adam Trischler](https://www.microsoft.com/en-us/research/people/adtrisch/), [Matthew Hausknecht](https://mhauskn.github.io/)  
+[<b>Aligning Text and Embodied Environments for Interactive Learning</b>](https://arxiv.org/abs/2010.03768)
+[Mohit Shridhar](https://mohitshridhar.com/), [Xingdi (Eric) Yuan](https://xingdi-eric-yuan.github.io/), [Marc-Alexandre Côté](https://www.microsoft.com/en-us/research/people/macote/),
+[Yonatan Bisk](https://yonatanbisk.com/), [Adam Trischler](https://www.microsoft.com/en-us/research/people/adtrisch/), [Matthew Hausknecht](https://mhauskn.github.io/)
 [ICLR 2021](https://openreview.net/forum?id=0IOX0YcCdTn)
 
 **ALFWorld** contains interactive TextWorld environments (Côté et. al) that parallel embodied worlds in the ALFRED dataset (Shridhar et. al). The aligned environments allow agents to reason and learn high-level policies in an abstract space before solving embodied tasks through low-level actuation.
@@ -18,40 +15,25 @@ For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io
 
 ## Quickstart
 
-Install with pip (python3.6 or higher, but >3.7 might require updating dependencies):
+Install with pip (python3.9+):
 
-```bash
-$ pip install https://github.com/MarcCote/downward/archive/faster_replan.zip
-$ pip install https://github.com/MarcCote/TextWorld/archive/handcoded_expert_integration.zip
-
-$ git clone https://github.com/alfworld/alfworld.git alfworld
-$ cd alfworld
-$ pip install -r requirements.txt
-$ pip install .
-
-# PyPi install is broken for now :( See https://github.com/alfworld/alfworld/issues/27
-# $ pip install alfworld
-```
+    pip install alfworld[full]
 
 Download PDDL & Game files and pre-trained MaskRCNN detector:
-
 ```bash
-$ export ALFWORLD_DATA=<storage_path>
-$ alfworld-download
+export ALFWORLD_DATA=<storage_path>
+alfworld-download
 ```
+
 Use `--extra` to download pre-trained checkpoints and seq2seq data.
 
 Play a Textworld game:
 
-```bash
-$ alfworld-play-tw
-```
+    alfworld-play-tw
 
 Play an Embodied-World (THOR) game:
 
-```bash
-$ alfworld-play-thor
-```
+    alfworld-play-thor
 
 Get started with a random agent:
 
@@ -86,34 +68,30 @@ Run `python <script>.py configs/base_config.yaml`
 Installing from source is recommended for development.
 
 Clone repo:
-```bash
-$ git clone https://github.com/alfworld/alfworld.git alfworld
-```
+
+    git clone https://github.com/alfworld/alfworld.git alfworld
+    cd alfworld
 
 Install requirements:
 ```bash
-# Note: Requires python 3.6 or higher
-$ virtualenv -p $(which python3.6) --system-site-packages alfworld_env # or whichever package manager you prefer
-$ source alfworld_env/bin/activate
+# Note: Requires python 3.9 or higher
+virtualenv -p $(which python3.9) --system-site-packages alfworld_env # or whichever package manager you prefer
+source alfworld_env/bin/activate
 
-$ pip install --upgrade pip
-$ pip install -r requirements.txt
-
-$ cd alfworld
-$ python setup.py develop
+pip install -e .[full]
 ```
 
 Download PDDL & Game Files and pre-trained MaskRCNN detector:
 ```bash
-$ export ALFWORLD_DATA=<storage_path>
-$ python scripts/alfworld-download
+export ALFWORLD_DATA=<storage_path>
+python scripts/alfworld-download
 ```
 Use `--extra` to download pre-trained checkpoints and seq2seq data.
 
 Train models:
-```bash
-$ python scripts/train_dagger.py configs/base_config.yaml
-```
+
+    python scripts/train_dagger.py configs/base_config.yaml
+
 
 Play around with [TextWorld and THOR demos](scripts/).
 
@@ -125,12 +103,13 @@ Play around with [TextWorld and THOR demos](scripts/).
 
 ## Prerequisites
 
-- Python 3.6
+- Python 3.9+
 - PyTorch 1.2.0 (later versions might be ok)
 - Torchvision 0.4.0 (later versions might be ok)
 - AI2THOR 2.1.0
 
-See [requirements.txt](requirements.txt) for all prerequisites
+See [requirements.txt](requirements.txt) for the prerequisites to run ALFWorld.
+See [requirements-full.txt](requirements-full.txt) for the prerequisites to run experiments.
 
 ## Hardware
 
@@ -143,7 +122,7 @@ Tested on:
 
 ## Docker Setup
 
-Pull [vzhong](https://github.com/vzhong)'s image: https://hub.docker.com/r/vzhong/alfworld  
+Pull [vzhong](https://github.com/vzhong)'s image: https://hub.docker.com/r/vzhong/alfworld
 
 **OR**
 
@@ -155,53 +134,50 @@ Modify [docker_build.py](docker/docker_build.py) and [docker_run.py](docker/dock
 
 Build the image:
 
-```bash
-$ python docker/docker_build.py
-```
+    python docker/docker_build.py
 
 #### Run (Local)
 
 For local machines:
 
-```bash
-$ python docker/docker_run.py
+    python docker/docker_run.py
 
-  source ~/alfworld_env/bin/activate
-  cd ~/alfworld
-```
+    source ~/alfworld_env/bin/activate
+    cd ~/alfworld
+
 
 #### Run (Headless)
 
 For headless VMs and Cloud-Instances:
 
 ```bash
-$ python docker/docker_run.py --headless
+python docker/docker_run.py --headless
 
-  # inside docker
-  tmux new -s startx  # start a new tmux session
+# inside docker
+tmux new -s startx  # start a new tmux session
 
-  # start nvidia-xconfig
-  sudo nvidia-xconfig -a --use-display-device=None --virtual=1280x1024
+# start nvidia-xconfig
+sudo nvidia-xconfig -a --use-display-device=None --virtual=1280x1024
 
-  # start X server on DISPLAY 0
-  # single X server should be sufficient for multiple instances of THOR
-  sudo python ~/alfworld/docker/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
+# start X server on DISPLAY 0
+# single X server should be sufficient for multiple instances of THOR
+sudo python ~/alfworld/docker/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
 
-  # detach from tmux shell
-  # Ctrl+b then d
+# detach from tmux shell
+# Ctrl+b then d
 
-  # source env
-  source ~/alfworld_env/bin/activate
+# source env
+source ~/alfworld_env/bin/activate
 
-  # set DISPLAY variable to match X server
-  export DISPLAY=:0
+# set DISPLAY variable to match X server
+export DISPLAY=:0
 
-  # check THOR
-  python ~/alfworld/docker/check_thor.py
+# check THOR
+python ~/alfworld/docker/check_thor.py
 
-  ###############
-  ## (300, 300, 3)
-  ## Everything works!!!
+###############
+## (300, 300, 3)
+## Everything works!!!
 ```
 
 You might have to modify `X_DISPLAY` in [gen/constants.py](alfworld/gen/constants.py) depending on which display you use.
@@ -212,20 +188,20 @@ ALFWorld can be setup on headless machines like AWS or GoogleCloud instances.
 The main requirement is that you have access to a GPU machine that supports OpenGL rendering. Run [startx.py](docker/startx.py) in a tmux shell:
 ```bash
 # start tmux session
-$ tmux new -s startx
+tmux new -s startx
 
 # start X server on DISPLAY 0
 # single X server should be sufficient for multiple instances of THOR
-$ sudo python ~/alfworld/scripts/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
+sudo python ~/alfworld/scripts/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
 
 # detach from tmux shell
 # Ctrl+b then d
 
 # set DISPLAY variable to match X server
-$ export DISPLAY=:0
+export DISPLAY=:0
 
 # check THOR
-$ python ~/alfworld/docker/check_thor.py
+python ~/alfworld/docker/check_thor.py
 
 ###############
 ## (300, 300, 3)
@@ -285,7 +261,7 @@ Also, checkout this guide: [Setting up THOR on Google Cloud](https://medium.com/
 ## License
 
 - ALFWorld - MIT License
-- TextWorld (Jericho) - GNU General Public License (GPL) v2.0
+- TextWorld - MIT License
 - Fast Downward - GNU General Public License (GPL) v3.0
 
 ## Contact

@@ -80,9 +80,8 @@ class BaseAgent(object):
                 self.explore_scene()
 
     def get_object(self, name, obj_dict):
-        vis_objs = [obj for obj in self.env.last_event.metadata['objects'] if obj['visible']]
-        for obj in vis_objs:
-            if obj["objectType"] == name:
+        for id, obj in obj_dict.items():
+            if obj['num_id'] == name:
                 return obj
         return None
 
@@ -171,109 +170,55 @@ class BaseAgent(object):
 
         return feedback
 
-    # command parser for alfworld
-    # def parse_command(self, action_str):
-
-    #     def get_triplet(astr, key):
-    #         astr = astr.replace(key, "").split()
-    #         obj, rel, tar = ' '.join(astr[:2]), astr[2], ' '.join(astr[-2:])
-    #         return obj, rel, tar
-
-    #     action_str = str(action_str).lower().strip()
-
-    #     if "go to " in action_str:
-    #         tar = action_str.replace("go to ", "")
-    #         return {'action': self.Action.GOTO, 'tar': tar}
-    #     elif "take " in action_str:
-    #         obj, rel, tar = get_triplet(action_str, "take ")
-    #         return {'action': self.Action.PICK, 'obj': obj, 'rel': rel, 'tar': tar}
-    #     elif "put " in action_str:
-    #         obj, rel, tar = get_triplet(action_str, "put ")
-    #         return {'action': self.Action.PUT, 'obj': obj, 'rel': rel, 'tar': tar}
-    #     elif "open " in action_str:
-    #         tar = action_str.replace("open ", "")
-    #         return {'action': self.Action.OPEN, 'tar': tar}
-    #     elif "close " in action_str:
-    #         tar = action_str.replace("close ", "")
-    #         return {'action': self.Action.CLOSE, 'tar': tar}
-    #     elif "use " in action_str:
-    #         tar = action_str.replace("use ", "")
-    #         return {'action': self.Action.TOGGLE, 'tar': tar}
-    #     elif "heat " in action_str:
-    #         obj, rel, tar = get_triplet(action_str, "heat ")
-    #         return {'action': self.Action.HEAT, 'obj': obj, 'rel': rel, 'tar': tar}
-    #     elif "cool " in action_str:
-    #         obj, rel, tar = get_triplet(action_str, "cool ")
-    #         return {'action': self.Action.COOL, 'obj': obj, 'rel': rel, 'tar': tar}
-    #     elif "clean " in action_str:
-    #         obj, rel, tar = get_triplet(action_str, "clean ")
-    #         return {'action': self.Action.CLEAN, 'obj': obj, 'rel': rel, 'tar': tar}
-    #     elif "slice " in action_str:
-    #         obj, rel, tar = get_triplet(action_str, "slice ")
-    #         return {'action': self.Action.SLICE, 'obj': obj, 'rel': rel, 'tar': tar}
-    #     elif "inventory" in action_str:
-    #         return {'action': self.Action.INVENTORY}
-    #     elif "examine " in action_str:
-    #         tar = action_str.replace("examine ", "")
-    #         return {'action': self.Action.EXAMINE, 'tar': tar}
-    #     elif "look" in action_str:
-    #         return {'action': self.Action.LOOK}
-    #     else:
-    #         return {'action': self.Action.PASS}
-
-    # Command parser for LLM-Planner style high level plans    
+    # command parser
     def parse_command(self, action_str):
 
         def get_triplet(astr, key):
             astr = astr.replace(key, "").split()
-            obj, tar = astr[0], astr[1]
-            return obj, "rel", tar
+            obj, rel, tar = ' '.join(astr[:2]), astr[2], ' '.join(astr[-2:])
+            return obj, rel, tar
 
-        action_str = str(action_str).strip()
+        action_str = str(action_str).lower().strip()
 
-        if "Navigation " in action_str:
-            tar = action_str.replace("Navigation ", "")
+        if "go to " in action_str:
+            tar = action_str.replace("go to ", "")
             return {'action': self.Action.GOTO, 'tar': tar}
-        elif "PickupObject " in action_str:
-            obj, rel, tar = get_triplet(action_str, "PickupObject ")
+        elif "take " in action_str:
+            obj, rel, tar = get_triplet(action_str, "take ")
             return {'action': self.Action.PICK, 'obj': obj, 'rel': rel, 'tar': tar}
-        elif "PutObject " in action_str:
-            obj, rel, tar = get_triplet(action_str, "PutObject ")
+        elif "put " in action_str:
+            obj, rel, tar = get_triplet(action_str, "put ")
             return {'action': self.Action.PUT, 'obj': obj, 'rel': rel, 'tar': tar}
-        elif "OpenObject " in action_str:
-            tar = action_str.replace("OpenObject ", "")
+        elif "open " in action_str:
+            tar = action_str.replace("open ", "")
             return {'action': self.Action.OPEN, 'tar': tar}
-        elif "CloseObject " in action_str:
-            tar = action_str.replace("CloseObject ", "")
+        elif "close " in action_str:
+            tar = action_str.replace("close ", "")
             return {'action': self.Action.CLOSE, 'tar': tar}
-        elif "ToggleObjectOn " in action_str:
-            tar = action_str.replace("ToggleObjectOn ", "")
+        elif "use " in action_str:
+            tar = action_str.replace("use ", "")
             return {'action': self.Action.TOGGLE, 'tar': tar}
-        elif "ToggleObjectOff " in action_str:
-            tar = action_str.replace("ToggleObjectOff ", "")
-            return {'action': self.Action.TOGGLE, 'tar': tar}
-        elif "SliceObject " in action_str:
-            obj, rel, tar = get_triplet(action_str, "SliceObject ")
-            return {'action': self.Action.SLICE, 'obj': obj, 'rel': rel, 'tar': tar}
-        # Below is not used by LLM-Planner
-        elif "HeatObject " in action_str:
-            obj, rel, tar = get_triplet(action_str, "HeatObject ")
+        elif "heat " in action_str:
+            obj, rel, tar = get_triplet(action_str, "heat ")
             return {'action': self.Action.HEAT, 'obj': obj, 'rel': rel, 'tar': tar}
-        elif "CoolObject " in action_str:
-            obj, rel, tar = get_triplet(action_str, "CoolObject ")
+        elif "cool " in action_str:
+            obj, rel, tar = get_triplet(action_str, "cool ")
             return {'action': self.Action.COOL, 'obj': obj, 'rel': rel, 'tar': tar}
-        elif "CleanObject " in action_str:
-            obj, rel, tar = get_triplet(action_str, "CleanObject ")
+        elif "clean " in action_str:
+            obj, rel, tar = get_triplet(action_str, "clean ")
             return {'action': self.Action.CLEAN, 'obj': obj, 'rel': rel, 'tar': tar}
-        elif "Inventory" in action_str:
+        elif "slice " in action_str:
+            obj, rel, tar = get_triplet(action_str, "slice ")
+            return {'action': self.Action.SLICE, 'obj': obj, 'rel': rel, 'tar': tar}
+        elif "inventory" in action_str:
             return {'action': self.Action.INVENTORY}
-        elif "ExamineObject " in action_str:
-            tar = action_str.replace("ExamineObject ", "")
+        elif "examine " in action_str:
+            tar = action_str.replace("examine ", "")
             return {'action': self.Action.EXAMINE, 'tar': tar}
-        elif "LookObject" in action_str:
+        elif "look" in action_str:
             return {'action': self.Action.LOOK}
         else:
-            return {'action': self.Action.PASS}   
+            return {'action': self.Action.PASS}
 
     def navigate(self, teleport_loc):
         return self.navigator.step(teleport_loc)
